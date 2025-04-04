@@ -1,4 +1,4 @@
-module github.com/Hfalz/litebeam
+module github.com/hfalzon/litebeam
 
 go 1.24.1
 
