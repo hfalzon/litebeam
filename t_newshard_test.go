@@ -7,8 +7,8 @@ func TestNewShard(t *testing.T) {
 		BasePath:       "./tests",
 		SoftCap:        2,
 		MaxDBCount:     5,
-		GenerationMode: "on-startup",
-		BalancingMode:  "round-robbin",
+		GenerationMode: OnStartup,
+		BalancingMode:  RoundRobbin,
 	}
 	s, err := NewSharder(c)
 	if err != nil {

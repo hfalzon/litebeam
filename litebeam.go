@@ -25,12 +25,26 @@ const (
 	);`
 )
 
+type BalancingMode string
+
+const (
+	RoundRobbin BalancingMode = "round-robin"
+	Fill        BalancingMode = "fill"
+)
+
+type GenerationMode string
+
+const (
+	OnStartup GenerationMode = "on-startup"
+	Dynamic   GenerationMode = "dynamic"
+)
+
 type Config struct {
 	BasePath       string
 	SoftCap        int
 	MaxDBCount     int
-	BalancingMode  string //accepts "round-robin", "fill"
-	GenerationMode string //accepts "on-startup", "dynamic"
+	BalancingMode  BalancingMode  //accepts "round-robin", "fill"
+	GenerationMode GenerationMode //accepts "on-startup", "dynamic"
 	InitSchemaFunc func(db *sql.DB) error
 }
 
@@ -76,7 +90,7 @@ func NewSharder(c Config) (*Sharder, error) {
 		log.Print("litebeam will fill a database to the softcap before sharding")
 	case "fill":
 		log.Print("litebeam will fill a database to the softcap before sharding")
-	case "round-robbin":
+	case "round-robin":
 		log.Print("litebeam will fill the database with the lowest user-count at the time of insert")
 	default:
 		return nil, fmt.Errorf("failed to parse litebeam config: %s is not a valid BalancingMode", c.BalancingMode)
@@ -282,7 +296,7 @@ func (s *Sharder) AssignItemToShard() (int, error) {
 	var targetShardID int = -1
 
 	switch s.Config.BalancingMode {
-	case "round-robbin":
+	case "round-robin":
 		err = tx.QueryRow("SELECT shard_id FROM shards ORDER BY item_count ASC, shard_id ASC LIMIT 1").Scan(&targetShardID)
 		if err != nil {
 			tx.Rollback()
