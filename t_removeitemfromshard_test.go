@@ -17,7 +17,7 @@ func TestRemoveItemFromShard(t *testing.T) {
 		t.Error(err)
 	}
 
-	for range 20 {
+	for range 20000 {
 		i, err := s.AssignItemToShard()
 		if err != nil {
 			t.Error(err)
@@ -25,14 +25,14 @@ func TestRemoveItemFromShard(t *testing.T) {
 		t.Log(i)
 	}
 
-	for i := range 10 {
+	for i := range 4231 {
 		err := s.RemoveItemFromShard(i) //Remove 1 user
 		if err != nil {
 			t.Error(err)
 		}
 	}
 
-	for range 10 {
+	for range 2123 {
 		i, err := s.AssignItemToShard()
 		if err != nil {
 			t.Error(err)

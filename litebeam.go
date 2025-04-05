@@ -472,6 +472,25 @@ func (s *Sharder) GetShard(shardID int) (*Shard, error) {
 	return &shard, nil
 }
 
+func (s *Sharder) GetAllShards() (map[string]*Shard, error) {
+	count, err := s.GetShardCount()
+	if err != nil {
+		return nil, fmt.Errorf("litebeam: failed to count shards while getting all shards: %w", err)
+	}
+
+	var m = map[string]*Shard{}
+
+	for i := range count {
+		s, err := s.GetShard(i)
+		if err != nil {
+			return nil, fmt.Errorf("litebeam: failed to get shard: %w", err)
+		}
+		m[fmt.Sprintf("shard_%d", i)] = s
+	}
+
+	return m, nil
+}
+
 // GetItemCount returns the number of items assigned to a specific shard.
 func (s *Sharder) GetItemCount(shardID int) (int, error) {
 	s.Mutex.RLock() // Read lock sufficient
