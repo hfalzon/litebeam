@@ -9,8 +9,6 @@ import (
 	"os"
 	"path/filepath"
 	"sync"
-
-	_ "github.com/mattn/go-sqlite3" // SQLite driver --Requires CGO
 )
 
 const (
@@ -105,7 +103,7 @@ func NewSharder(c Config) (*Sharder, error) {
 	metaDBDSN := metaPath + dbConnOptions
 
 	// Open the metadata database (creates if not exists)
-	db, err := sql.Open("sqlite3", metaDBDSN)
+	db, err := sql.Open(sqliteDriverName, metaDBDSN)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open/create metadata db '%s': %w", metaPath, err)
 	}
@@ -242,7 +240,7 @@ func (s *Sharder) createAndRegisterNewShard(shardID int) error {
 	shardDSN := createDSN(dbPath)
 
 	// --- Create the actual shard SQLite database file ---
-	shardDB, err := sql.Open("sqlite3", shardDSN)
+	shardDB, err := sql.Open(sqliteDriverName, shardDSN)
 	if err != nil {
 		return fmt.Errorf("failed to open/create shard DB file '%s': %w", dbPath, err)
 	}
@@ -444,7 +442,7 @@ func (s *Sharder) GetDB(shardID int) (*sql.DB, error) {
 
 	// Open connection to the specific shard DB
 	shardDSN := dbPath + dbConnOptions
-	db, err := sql.Open("sqlite3", shardDSN)
+	db, err := sql.Open(sqliteDriverName, shardDSN)
 	if err != nil {
 		return nil, fmt.Errorf("failed to open database for shard %d (%s): %w", shardID, dbPath, err)
 	}
